@@ -17,6 +17,8 @@ export type CommentState = {
   'fetchTargetRef.current'와 같은 변환 가능한 값은 변환해도 구성 요소가 다시 렌더링되지 않으므로 유효한 종속성이 아닙니다.
 */
 
+// https://stackoverflow.com/questions/53214116/intersectionobserver-callback-firing-immediately-on-page-load
+
 function App() {
   const [page, setPage] = useState<number>(1);
   const [comments, loading] = useFetch(
@@ -27,10 +29,12 @@ function App() {
   const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
     const [target] = entries;
     console.log(target);
-    if (target.isIntersecting) {
+    if (target.intersectionRatio > 0) {
       setPage((prePage) => prePage + 1);
     }
   }, []);
+
+  console.log(comments);
 
   useEffect(() => {
     if (fetchTargetRef.current === null) return;
